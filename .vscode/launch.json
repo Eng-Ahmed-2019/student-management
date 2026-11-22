@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "StudentManagementApplication",
+            "request": "launch",
+            "mainClass": "com.ahmed.student_management.StudentManagementApplication",
+            "projectName": "student-management",
+            "console": "externalTerminal"
+        }
+    ]
+}
