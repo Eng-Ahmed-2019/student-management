@@ -1,8 +1,11 @@
 package com.ahmed.student_management.controller;
 
-import java.util.List;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.ahmed.student_management.dto.StudentRequestDTO;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/students")
@@ -27,8 +31,14 @@ public class StudentController {
     }
 
     @GetMapping("/getAllStudents")
-    public ResponseEntity<List<StudentResponseDTO>> getAllStudents(){
-        return ResponseEntity.ok(this.service.getAllStudents());
+    public ResponseEntity<Page<StudentResponseDTO>> getAllStudents(
+        @PageableDefault(
+            size = 10,
+            sort = "id",
+            direction = Sort.Direction.ASC
+        ) Pageable pageable
+    ){
+        return ResponseEntity.ok(this.service.getAllStudents(pageable));
     }
     /*
     @GetMapping("/getAllStudents")
@@ -78,6 +88,7 @@ public class StudentController {
         return this.service.updateStudent(id, request);
     }*/
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteStudent/{id}")
     public ResponseEntity<String>deleteStudent(@PathVariable Long id){
         return ResponseEntity.ok(this.service.deleteStudent(id));
@@ -89,10 +100,15 @@ public class StudentController {
     }*/
 
     @GetMapping("/searchStudents")
-    public ResponseEntity<List<StudentResponseDTO>> searchStudents(
-        @RequestParam String name
+    public ResponseEntity<Page<StudentResponseDTO>> searchStudents(
+        @RequestParam String name,
+        @PageableDefault(
+                    size = 10,
+                    sort = "id",
+                    direction = Sort.Direction.ASC
+            ) Pageable pageable
     ){
-        return ResponseEntity.ok(this.service.searchByName(name));
+        return ResponseEntity.ok(this.service.searchByName(name,pageable));
     }
     /*
     @GetMapping("/searchStudents")
